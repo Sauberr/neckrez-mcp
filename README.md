@@ -128,7 +128,7 @@ the tool list, that calls without a valid key are refused) without an API key, s
 
 ## Related
 
-- REST API and OpenAPI 3.1: https://neckrez.tech/docs · https://neckrez.tech/api/v1/openapi.json
+- REST API and OpenAPI 3.1: https://neckrez.tech/docs/api · https://neckrez.tech/api/v1/openapi.json
 - Command-line client: https://github.com/Sauberr/neckrez-cli
 - `llms.txt` for AI agents: https://neckrez.tech/llms.txt
 - Support: support@neckrez.tech
