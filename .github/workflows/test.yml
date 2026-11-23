@@ -1,0 +1,28 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 6 * * *"   # daily: also checks that the hosted endpoint is up and unchanged
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install jsonschema and fetch the official server.json schema
+        run: |
+          pip install jsonschema
+          curl -fsSL "$(python -c 'import json;print(json.load(open("server.json"))["$schema"])')" -o /tmp/server.schema.json
+      - name: Manifest and docs (offline)
+        env:
+          MCP_SERVER_SCHEMA: /tmp/server.schema.json
+        run: python -m unittest tests.test_manifest -v
+      - name: Live endpoint (no API key, nothing is created)
+        run: python -m unittest tests.test_live -v
+      - name: Example compiles
+        run: python -m py_compile examples/list_plans.py

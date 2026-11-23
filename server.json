@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Sauberr/neckrez",
+  "title": "Neckrez",
+  "description": "Rent and manage VPS, dedicated CPU, GPU and bare metal servers, paid in crypto. No KYC.",
+  "repository": {
+    "url": "https://github.com/Sauberr/neckrez-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "websiteUrl": "https://neckrez.tech/docs/mcp",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://neckrez.tech/api/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Your Neckrez API key as a Bearer token, e.g. \"Bearer nek_...\". Create one at https://neckrez.tech/dashboard/api-keys. A read-only key can only read.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
