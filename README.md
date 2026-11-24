@@ -4,7 +4,7 @@
 
 MCP server for [Neckrez](https://neckrez.tech): let an AI assistant (Claude, Cursor, VS Code, any MCP client) list plans and prices, get a quote, create a VPS, dedicated CPU, GPU or bare metal server with your SSH key, and reboot, back up or destroy it from the chat.
 
-Neckrez is a crypto-paid cloud host: sign up with an email only (no ID, no card, no KYC), top up a prepaid balance with Bitcoin, USDT, Monero or 300+ other coins, and pay by the hour. Servers run on Vultr, DigitalOcean and Linode.
+Neckrez is a crypto-paid cloud host: sign up with an email only (no ID, no card, no KYC), top up a prepaid balance with Bitcoin, USDT, Monero or 300+ other coins, and pay by the hour. Servers run on Vultr, DigitalOcean, Linode and Hetzner.
 
 This is a **remote** server. There is nothing to install: the MCP endpoint is hosted by Neckrez.
 
@@ -77,6 +77,7 @@ claude mcp add --transport http neckrez https://neckrez.tech/api/mcp \
 - "Spin up a small Ubuntu server in Frankfurt for an hour. Here is my key: ssh-ed25519 AAAA..."
 - "What is the cheapest GPU I can get in Europe right now, and how long does my balance last with it?"
 - "List my servers and destroy the ones named test-1 and test-2."
+- "My balance is low: prepare a $20 top-up in USDT on BSC."
 
 ## Tools
 
@@ -96,13 +97,16 @@ claude mcp add --transport http neckrez https://neckrez.tech/api/mcp \
 | `get_rdns`, `set_rdns` | Reverse DNS (PTR) records | set: yes |
 | `list_backups`, `create_backup`, `restore_backup`, `delete_backup` | Snapshots kept 7 days | create/restore/delete: yes |
 | `billing_history` | Recent top-ups and charges | no |
+| `list_currencies` | Coins the balance can be topped up with, minimums and VAT | no |
+| `top_up` | Create a crypto payment for you to pay: address, exact amount, network, deadline | yes (a payment request only) |
+| `list_deposits`, `deposit_status` | Your top-ups; a status check credits the balance once the payment is confirmed | no |
 
 ## Money and safety
 
 - One `create_server` call makes at most 3 servers and at most **$1 per hour** in total unless the assistant passes a higher `max_hourly_usd`. Above that nothing is created and the tool returns the price, so the assistant has to ask you. `restore_backup` works the same way.
 - `destroy_server`, `change_ip` and `delete_backup` need `confirm: true` and the exact server name (or backup label).
 - A read-only key can call only the read tools.
-- The assistant cannot top up your balance: you pay in the dashboard. A stopped server is still billed; billing stops when a server is destroyed.
+- `top_up` only creates a payment request (an address and an exact amount). No money moves until you send the coins yourself; `deposit_status` shows when the balance is credited. A read-only key cannot call it. A stopped server is still billed; billing stops when a server is destroyed.
 - Give the assistant your SSH public key. Without one the root password is available in the dashboard or through `get_root_password`, and then it stays in the chat history.
 - Requests share the API limit of 60 per minute per key.
 

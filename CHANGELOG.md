@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0 — 2026-11-24
+- New tools: `list_currencies`, `top_up` (creates a crypto payment request for the user to pay), `list_deposits`, `deposit_status`.
+
 ## 1.0.0 — 2026-11-23
 - Hosted MCP server at `https://neckrez.tech/api/mcp` (Streamable HTTP, Bearer API key).
 - 19 tools: account, plans and prices, locations, OS and apps, quotes, create/list/get servers, power actions, root password,

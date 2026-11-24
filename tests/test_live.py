@@ -15,6 +15,7 @@ EXPECTED_TOOLS = {
     "get_account", "list_options", "list_locations", "list_os", "quote", "create_server", "list_servers",
     "get_server", "server_power", "get_root_password", "change_ip", "destroy_server", "get_rdns", "set_rdns",
     "list_backups", "create_backup", "restore_backup", "delete_backup", "billing_history",
+    "list_currencies", "top_up", "list_deposits", "deposit_status",
 }
 DESTRUCTIVE = {"destroy_server", "change_ip", "delete_backup"}
 
