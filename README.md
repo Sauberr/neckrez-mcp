@@ -92,6 +92,7 @@ claude mcp add --transport http neckrez https://neckrez.tech/api/mcp \
 | `list_servers`, `get_server` | Servers with status, IPs and an ssh command | read |
 | `server_power` | Reboot, stop or start | deploy |
 | `get_root_password` | Login and root password | deploy |
+| `reset_root_password` | New password without a reinstall, through the server's recovery key | deploy |
 | `change_ip` | New public IPv4 (needs `confirm` and the exact name) | deploy |
 | `destroy_server` | Delete a server (needs `confirm` and the exact name) | destroy |
 | `get_rdns`, `set_rdns` | Reverse DNS (PTR) records | read / deploy |

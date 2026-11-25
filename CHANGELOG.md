@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0 — 2026-11-25
+- New tool: `reset_root_password` (a new password without a reinstall, through the server's recovery key).
+
 ## 1.2.0 — 2026-11-25
 - API keys carry permissions (read, deploy, destroy, support, billing); every tool checks the one it needs and says which is missing.
 - New tools: `support_read`, `support_send`.
