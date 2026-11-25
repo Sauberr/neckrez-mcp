@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0 — 2026-11-26
+- OAuth 2.1 sign-in at `https://neckrez.tech/mcp`: Claude, ChatGPT and Claude Code connect without an API key; the user picks permissions and an hourly spending cap, and can disconnect the app from the dashboard.
+
 ## 1.3.0 — 2026-11-25
 - New tool: `reset_root_password` (a new password without a reinstall, through the server's recovery key).
 

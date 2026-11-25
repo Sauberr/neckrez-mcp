@@ -7,9 +7,13 @@
     "url": "https://github.com/Sauberr/neckrez-mcp",
     "source": "github"
   },
-  "version": "1.0.0",
+  "version": "1.4.0",
   "websiteUrl": "https://neckrez.tech/docs/mcp",
   "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://neckrez.tech/mcp"
+    },
     {
       "type": "streamable-http",
       "url": "https://neckrez.tech/api/mcp",

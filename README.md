@@ -12,12 +12,22 @@ This is a **remote** server. There is nothing to install: the MCP endpoint is ho
 |---|---|
 | Endpoint | `https://neckrez.tech/api/mcp` |
 | Transport | Streamable HTTP (stateless, `POST`, JSON responses) |
-| Auth | `Authorization: Bearer nek_...` (an API key from [your dashboard](https://neckrez.tech/dashboard/api-keys)) |
+| Auth | OAuth sign-in at `https://neckrez.tech/mcp`, or `Authorization: Bearer nek_...` (an API key from [your dashboard](https://neckrez.tech/dashboard/api-keys)) at `/api/mcp` |
 | Docs | https://neckrez.tech/docs/mcp |
 
 `initialize` and `tools/list` work without a key, so clients and directories can see the tools. Calling a tool needs a key.
 
-## Connect
+## Connect with one click (OAuth)
+
+Claude, ChatGPT and Claude Code can sign in to Neckrez without an API key. Use **`https://neckrez.tech/mcp`**: the first time the assistant needs your account, a Neckrez page opens where you sign in, tick the permissions (read, deploy, destroy, support, billing) and set an hourly spending cap. Connected apps are listed (and revocable) at [neckrez.tech/dashboard/api-keys](https://neckrez.tech/dashboard/api-keys).
+
+- **Claude** (claude.ai, Desktop, mobile): Settings → Connectors → Add custom connector → URL `https://neckrez.tech/mcp`.
+- **ChatGPT**: Settings → Apps → Advanced settings → developer mode → create an app with that URL and OAuth.
+- **Claude Code**: `claude mcp add --transport http neckrez https://neckrez.tech/mcp`, then `/mcp` to sign in.
+
+OAuth 2.1 with PKCE (S256) and dynamic client registration; discovery at `https://neckrez.tech/.well-known/oauth-protected-resource/mcp`. Tokens work only for the MCP server.
+
+## Connect with an API key
 
 Create an API key at [neckrez.tech/dashboard/api-keys](https://neckrez.tech/dashboard/api-keys). Pick its permissions: `read` (always on), `deploy`, `destroy`, `support`, `billing`. Start with only `read` if you only want the assistant to look.
 

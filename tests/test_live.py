@@ -77,5 +77,39 @@ class Live(unittest.TestCase):
         self.assertEqual(res["error"]["code"], -32601)
 
 
+def get_json(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "neckrez-mcp-tests"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode())
+
+
+@unittest.skipIf(os.environ.get("NECKREZ_SKIP_LIVE"), "live tests skipped")
+class OAuth(unittest.TestCase):
+    """The sign-in endpoint and its discovery documents (MCP authorization spec)."""
+
+    SIGNIN = "https://neckrez.tech/mcp"
+
+    def test_signin_endpoint_asks_for_a_token(self):
+        req = urllib.request.Request(self.SIGNIN, data=json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                                                                   "params": {}}).encode(), method="POST",
+                                     headers={"Content-Type": "application/json", "User-Agent": "neckrez-mcp-tests"})
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            urllib.request.urlopen(req, timeout=30)
+        self.assertEqual(ctx.exception.code, 401)
+        self.assertIn('resource_metadata="https://neckrez.tech/.well-known/oauth-protected-resource/mcp"',
+                      ctx.exception.headers.get("WWW-Authenticate", ""))
+
+    def test_discovery_documents(self):
+        pr = get_json("https://neckrez.tech/.well-known/oauth-protected-resource/mcp")
+        self.assertEqual(pr["resource"], self.SIGNIN)
+        issuer = pr["authorization_servers"][0]
+        meta = get_json(issuer.rstrip("/") + "/.well-known/oauth-authorization-server")
+        self.assertEqual(meta["issuer"], issuer)
+        self.assertIn("S256", meta["code_challenge_methods_supported"])
+        self.assertIn("authorization_code", meta["grant_types_supported"])
+        for key in ("authorization_endpoint", "token_endpoint", "registration_endpoint"):
+            self.assertTrue(meta[key].startswith("https://"))
+
+
 if __name__ == "__main__":
     unittest.main()

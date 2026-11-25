@@ -24,13 +24,14 @@ class Manifest(unittest.TestCase):
         self.assertLessEqual(len(self.doc["description"]), 100)
         self.assertRegex(self.doc["version"], r"^\d+\.\d+\.\d+$")
 
-    def test_remote_endpoint(self):
-        remotes = self.doc["remotes"]
-        self.assertEqual(len(remotes), 1)
-        r = remotes[0]
-        self.assertEqual(r["type"], "streamable-http")
-        self.assertTrue(r["url"].startswith("https://"))
-        auth = [h for h in r.get("headers", []) if h["name"] == "Authorization"]
+    def test_remote_endpoints(self):
+        """Two remotes: the OAuth sign-in endpoint (no header, the client signs in) and the API-key one."""
+        remotes = {r["url"]: r for r in self.doc["remotes"]}
+        self.assertEqual(set(remotes), {"https://neckrez.tech/mcp", "https://neckrez.tech/api/mcp"})
+        for r in remotes.values():
+            self.assertEqual(r["type"], "streamable-http")
+        self.assertFalse(remotes["https://neckrez.tech/mcp"].get("headers"))
+        auth = [h for h in remotes["https://neckrez.tech/api/mcp"].get("headers", []) if h["name"] == "Authorization"]
         self.assertTrue(auth and auth[0]["isSecret"] and auth[0]["isRequired"])
 
     def test_repository_matches_name(self):
@@ -52,9 +53,10 @@ class Manifest(unittest.TestCase):
 
 class Docs(unittest.TestCase):
     def test_readme_uses_the_manifest_endpoint(self):
-        url = json.loads(read("server.json"))["remotes"][0]["url"]
         readme = read("README.md")
-        self.assertIn(url, readme)
+        for r in json.loads(read("server.json"))["remotes"]:
+            self.assertIn(r["url"], readme)
+        url = "https://neckrez.tech/api/mcp"
         # every config snippet in the README points at the same endpoint
         for found in re.findall(r"https://[\w.-]+/api/mcp\b", readme):
             self.assertEqual(found, url)
