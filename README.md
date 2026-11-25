@@ -19,7 +19,7 @@ This is a **remote** server. There is nothing to install: the MCP endpoint is ho
 
 ## Connect
 
-Create an API key at [neckrez.tech/dashboard/api-keys](https://neckrez.tech/dashboard/api-keys). Start with a **read-only** key if you only want the assistant to look.
+Create an API key at [neckrez.tech/dashboard/api-keys](https://neckrez.tech/dashboard/api-keys). Pick its permissions: `read` (always on), `deploy`, `destroy`, `support`, `billing`. Start with only `read` if you only want the assistant to look.
 
 **Claude Code**
 
@@ -81,32 +81,33 @@ claude mcp add --transport http neckrez https://neckrez.tech/api/mcp \
 
 ## Tools
 
-| Tool | What it does | Changes things |
+| Tool | What it does | Key permission |
 |---|---|---|
-| `get_account` | Balance, hourly spend, how long the balance lasts, servers against the limit | no |
-| `list_options` | Plans with vCPU, RAM, disk, traffic, GPU, prices and locations; filters | no |
-| `list_locations` | Locations with codes, cities, countries | no |
-| `list_os` | OS images and one-click apps | no |
-| `quote` | Price of an order and whether the balance covers it | no |
-| `create_server` | Create 1 to 3 servers (OS or app) | yes |
-| `list_servers`, `get_server` | Servers with status, IPs and an ssh command | no |
-| `server_power` | Reboot, stop or start | yes |
-| `get_root_password` | Login and root password | yes |
-| `change_ip` | New public IPv4 (needs `confirm` and the exact name) | yes |
-| `destroy_server` | Delete a server (needs `confirm` and the exact name) | yes |
-| `get_rdns`, `set_rdns` | Reverse DNS (PTR) records | set: yes |
-| `list_backups`, `create_backup`, `restore_backup`, `delete_backup` | Snapshots kept 7 days | create/restore/delete: yes |
-| `billing_history` | Recent top-ups and charges | no |
-| `list_currencies` | Coins the balance can be topped up with, minimums and VAT | no |
-| `top_up` | Create a crypto payment for you to pay: address, exact amount, network, deadline | yes (a payment request only) |
-| `list_deposits`, `deposit_status` | Your top-ups; a status check credits the balance once the payment is confirmed | no |
+| `get_account` | Balance, hourly spend, how long the balance lasts, servers against the limit | read |
+| `list_options` | Plans with vCPU, RAM, disk, traffic, GPU, prices and locations; filters | read |
+| `list_locations` | Locations with codes, cities, countries | read |
+| `list_os` | OS images and one-click apps | read |
+| `quote` | Price of an order and whether the balance covers it | read |
+| `create_server` | Create 1 to 3 servers (OS or app) | deploy |
+| `list_servers`, `get_server` | Servers with status, IPs and an ssh command | read |
+| `server_power` | Reboot, stop or start | deploy |
+| `get_root_password` | Login and root password | deploy |
+| `change_ip` | New public IPv4 (needs `confirm` and the exact name) | deploy |
+| `destroy_server` | Delete a server (needs `confirm` and the exact name) | destroy |
+| `get_rdns`, `set_rdns` | Reverse DNS (PTR) records | read / deploy |
+| `list_backups`, `create_backup`, `restore_backup`, `delete_backup` | Snapshots kept 7 days | read / deploy / destroy |
+| `billing_history` | Recent top-ups and charges | read |
+| `list_currencies` | Coins the balance can be topped up with, minimums and VAT | read |
+| `top_up` | Create a crypto payment for you to pay: address, exact amount, network, deadline | billing |
+| `list_deposits`, `deposit_status` | Your top-ups; a status check credits the balance once the payment is confirmed | read |
+| `support_read`, `support_send` | Read the support chat; write to support on your behalf (marked as sent by an AI assistant, at most 10 an hour) | support |
 
 ## Money and safety
 
 - One `create_server` call makes at most 3 servers and at most **$1 per hour** in total unless the assistant passes a higher `max_hourly_usd`. Above that nothing is created and the tool returns the price, so the assistant has to ask you. `restore_backup` works the same way.
 - `destroy_server`, `change_ip` and `delete_backup` need `confirm: true` and the exact server name (or backup label).
-- A read-only key can call only the read tools.
-- `top_up` only creates a payment request (an address and an exact amount). No money moves until you send the coins yourself; `deposit_status` shows when the balance is credited. A read-only key cannot call it. A stopped server is still billed; billing stops when a server is destroyed.
+- Each tool needs one key permission: `read` for the read tools, `deploy` to create and change, `destroy` for `destroy_server` and `delete_backup`, `billing` for `top_up`, `support` for the support chat. A key without `destroy` is a good default for an assistant: it can build, and you delete from the dashboard.
+- `top_up` only creates a payment request (an address and an exact amount). No money moves until you send the coins yourself; `deposit_status` shows when the balance is credited. It needs the `billing` permission. A stopped server is still billed; billing stops when a server is destroyed.
 - Give the assistant your SSH public key. Without one the root password is available in the dashboard or through `get_root_password`, and then it stays in the chat history.
 - Requests share the API limit of 60 per minute per key.
 

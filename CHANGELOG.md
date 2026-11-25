@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 — 2026-11-25
+- API keys carry permissions (read, deploy, destroy, support, billing); every tool checks the one it needs and says which is missing.
+- New tools: `support_read`, `support_send`.
+
 ## 1.1.0 — 2026-11-24
 - New tools: `list_currencies`, `top_up` (creates a crypto payment request for the user to pay), `list_deposits`, `deposit_status`.
 
